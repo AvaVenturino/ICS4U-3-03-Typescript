@@ -8,83 +8,47 @@
 */
 
 import { createPrompt } from 'bun-promptx'
+const MIN = 0
+const MAX = 999
+const ARRAY_SIZE = 50
 
-class BinarySearch {
-  private constructor() {
-    // Prevent instantiation
-    throw new Error("Cannot be instantiated");
-  }
-
-  // Binary search function
-  static binarySearch(userArray: number[], userNumber: number,
-                      lowIndex: number, highIndex: number): number {
-    let rValue: number = -1;
+function binarySearch(userArray: number[], userNumber: number,
+  lowIndex: number, highIndex: number) {
+    let rVal: number = -1
     if (lowIndex <= highIndex) {
-      const midIndex: number = Math.floor((lowIndex + highIndex) / 2);
-      if (userArray[midIndex] === userNumber) {
-        rValue = midIndex;
+      let midIndex: number = Math.floor((lowIndex + highIndex) / 2)
+      if (userArray[midIndex] == userNumber) {
+        rVal = midIndex
       } else if (userArray[midIndex] > userNumber) {
-        rValue = BinarySearch.binarySearch(userArray, userNumber, lowIndex, midIndex - 1);
+        rVal = binarySearch(userArray, userNumber, lowIndex, midIndex - 1)
       } else {
-        rValue = BinarySearch.binarySearch(userArray, userNumber, midIndex + 1, highIndex);
+        rVal = binarySearch(userArray, userNumber, midIndex + 1, highIndex)
       }
     }
-    return rValue;
+    return rVal
   }
 
-  // Main function
-  public static main(args: string[]): void {
-    console.log("Binary Search Program");
-    try {
-      // Initializing the random class
-      const randNumber: Random = new Random();
+  let numberArray: number[] = []
 
-      // Initializing array of numbers
-      const ARRAY_SIZE: number = 250;
-      const MAX: number = 999;
-      const randomNumberArray: number[] = new Array(ARRAY_SIZE);
+  for (let i = 0; i < ARRAY_SIZE; i++) {
+    numberArray[i] = Math.floor(Math.random() * (MAX + 1))
+  }
 
-      // Adding numbers to the array
-      for (let counter = 0; counter < randomNumberArray.length; counter++) {
-        randomNumberArray[counter] = randNumber.nextInt(MAX) + 1;
-      }
+  numberArray = numberArray.sort((a, b) => a - b)
 
-      // Sorting the array
-      const numberArray: number[] = [...randomNumberArray].sort((a, b) => a - b);
+  console.log("\nSorted list of numbers:\n")
+  console.log(numberArray)
 
-      console.log("\nSorted list of numbers:\n");
-      console.log(numberArray.map(element => element.toString().padStart(3, '0')).join(", "));
-      console.log("\n");
-
-      // Getting user input as to what number they wish to search for
-      const userInput: Scanner = new Scanner();
-      console.log("What number are you searching for in the array (integer between 0 and 999): ");
-      const searchNumber: number = userInput.nextInt();
-      userInput.close();
-      console.log();
-
-      // Ensuring the user inputs an appropriate integer
-      if (searchNumber > 999 || searchNumber < 0) {
-        throw new Error();
-      } else {
-        // Using binary search to find the user's chosen number in the array
-        const searchResult: number = BinarySearch.binarySearch(numberArray, searchNumber,
-                                          0, numberArray.length - 1);
-
-        // Outputting the results of the search
-        console.log();
-        console.log("Your number is in index: " + searchResult);
-      }
-
-      // Catches and tells the user that an error occurred
-    } catch (e) {
-      console.log();
-      console.log("ERROR: Invalid Input");
+  try {
+    const userInput = createPrompt(
+      `What number are you searching for in the array? (integer between 0 and 999): `
+    )
+    let inputInt = parseInt(userInput.value)
+    if (inputInt > MAX || inputInt < MIN) {
+      throw Error()
     }
-  }
-}
-
-// Entry point
-BinarySearch.main([]);
-console.log("\nDone.");
-
+      console.log(`Returned = ${binarySearch(numberArray, inputInt, 0, numberArray.length - 1)}`)
+    } catch {
+      console.log(`Invalid input.`)
+    }
+console.log("\nDone.")
