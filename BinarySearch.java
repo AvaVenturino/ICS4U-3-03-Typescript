@@ -43,9 +43,19 @@ final class BinarySearch {
   */
   static int binarySearch(final int[] userArray, final int userNumber,
                           final int lowIndex, final int highIndex) {
-    // solve this function!
+    int rValue = -1;
+    if (lowIndex <= highIndex) {
+      int midIndex = (lowIndex + highIndex) / 2;
+      if (userArray[midIndex] == userNumber) {
+        rValue = midIndex;
+      } else if (userArray[midIndex] > userNumber) {
+        rValue = binarySearch(userArray, userNumber, lowIndex, midIndex - 1);
+      } else {
+        rValue = binarySearch(userArray, userNumber, midIndex + 1, highIndex);
+      }
+    }
+    return rValue;
 
-    return -1;
   }
 
   public static void main(final String[] args) {
